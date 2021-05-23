@@ -28,7 +28,7 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $credentials = request(['username', 'password']);    // email   originaria
+        $credentials = request(['email', 'password']);    // email   originaria
 
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['data'=> $credentials,'error' => 'Unauthorized1'], 401);
@@ -107,7 +107,9 @@ class AuthController extends Controller
             'cognome' => auth()->user()->cognome,
             'email'  => auth()->user()->email,
             'level' => auth()->user()->idRuolo_Day,
-            'id' => auth()->user()->id
+            'id' => auth()->user()->id,
+            'idruoloweb' => auth()->user()->idruoloweb
         ]);
     }
 }
+

@@ -56,6 +56,7 @@ class Tabella_twDettController extends Controller
     {
         $data = [];
         $message = '';
+        $rc = 'Ko';
         try {
             $User = new Tabella_tw_dett();
             $success = true;
@@ -64,12 +65,13 @@ class Tabella_twDettController extends Controller
             $User->fill($postData);
             $success = $User->save();
             $data = $User;
-            $message = 'Inserimento eseguito con successo';
+            $message = 'Inserimento eseguito con successo !!';
+            $rc = 'Ok';
         } catch (\Exception $e) {
             $success = false;
             $message = $e->getMessage();
         }
-        return compact('data','message','success');
+        return compact('data','message','success', 'rc');
     }
 
     /**
@@ -120,6 +122,7 @@ class Tabella_twDettController extends Controller
         // inizializzo i parametri per l'aggiornamento
         $data = [];
         $message = '';
+        $rc = 'KO';
         try {
             $User = Tabella_tw_dett::findOrFail($id);
             $success = true;
@@ -132,13 +135,14 @@ class Tabella_twDettController extends Controller
             // eseguo l'aggiornamento
             $success = $User->update($postData);
             $data = $User;
+            $rc = 'OK';
             $message = 'Aggiornamento eseguito con successo';
 
         } catch (\Exception $e) {
             $success = false;
             $message = $e->getMessage();
         }
-        return compact('data','message','success');
+        return compact('data','message','success', 'rc');
     }
 
 
@@ -163,4 +167,36 @@ class Tabella_twDettController extends Controller
         }
         return compact('data','message','success');
     }
+
+
+
+
+    public function getelemLastId(Request $request)
+
+    {
+
+       $last = 9999;
+       $tappo = 'N';
+       $res = [
+            'data' =>[],
+            'number' => 0,
+            'message' => 'Non effettuata regolare lettura last id',
+            'Rc' => 'ko'
+                ];
+            try{
+               // $res['data'] = DB::table('Commandas')->orderBy('id', 'DESC')->where('id', '<', $last)->get();
+                $res['data'] = DB::table('Tabella_tw_detts')->where('tappo', '=', $tappo)->orderBy('id','desc')->first();
+
+                $res['message'] = 'trovato  id dell Ultimo elemento tabellare';
+                $res['number'] = Tabella_tw_dett::All()->where('tappo', '=', $tappo)->count();
+                $res['Rc'] = 'Ok';
+            } catch (\Exception $e){
+                $res['message'] = $e->getMessage();
+            }
+            return $res;
+    }
+
+
+
+
 }

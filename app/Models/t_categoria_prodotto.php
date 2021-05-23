@@ -9,7 +9,7 @@ class t_categoria_prodotto extends Model
 {
         //use HasFactory;
 
-   protected $fillable = ['id', 'd_categoria', 'key_utenti_operation'];
+   protected $fillable = ['id', 'd_categoria', 'tappo', 'key_utenti_operation'];
 
    /**
   * The attributes that should be hidden for arrays.

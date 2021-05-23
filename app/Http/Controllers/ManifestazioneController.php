@@ -155,15 +155,17 @@ class ManifestazioneController extends Controller
         $data = [];
         $message = 'Cancellazione eseguita con successo !!';
         $success = true;
+        $rc = 'KO';
         try {
             $User = Manifestazione::findOrFail($id);
             $data = $User;
             $success = $User->delete();
+            $rc = 'OK';
         } catch (\Exception $e) {
             $success = false;
             $message = 'Manifestazione non trovata - Cancellazione non possibile';
         }
-        return compact('data','message','success');
+        return compact('data','message','success', 'rc');
     }
 
 
@@ -212,5 +214,32 @@ class ManifestazioneController extends Controller
             }
             return $res;
    }
+
+   public function getManifestazioneActive()
+   {
+
+       $stato = 1;   // Imposto lo stato di attivo per determinare la manifestaione attiva
+       $res = [
+           'data' =>[],
+           'number' => 0,
+           'message' => 'Nessuna Manifestazione Attiva',
+           'rc' => 'KO'
+               ];
+           try{
+
+               $res['data'] =  Manifestazione::select('Manifestaziones.*', 'T_Stato_Manifestaziones.d_stato_manifestazione')
+                                               ->join('T_Stato_Manifestaziones', 'T_Stato_Manifestaziones.id', '=', 'Manifestaziones.statoManifestazione')
+                                               ->where('statoManifestazione', '=', $stato)->first();   // $res['data'] = Fedele::where('idmessa',$idmessa->input('idmessa'))->get();
+               $res['number'] = Manifestazione::where('statoManifestazione', '=', $stato)->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
+               $res['message'] = 'trovato Manifestazioni per stato filtrato';
+               $res['rc'] = 'OK';
+           } catch (\Exception $e){
+               $res['message'] = $e->getMessage();
+           }
+           return $res;
+  }
+
+
+
 
 }

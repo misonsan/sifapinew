@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class T_Stato_Tipologia extends Model
 {
-    protected $fillable = ['id', 'd_stato_tipologia', 'key_utenti_operation' ];
+    protected $fillable = ['id', 'd_stato_tipologia', 'tappo', 'key_utenti_operation' ];
 
     /**
    * The attributes that should be hidden for arrays.

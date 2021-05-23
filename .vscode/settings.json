@@ -1,8 +1,18 @@
 {
     "cSpell.words": [
         "Categorie",
+        "Prenotazione",
+        "authsmtp",
         "categoria",
+        "codpren",
+        "cognome",
+        "datapren",
+        "mailtrap",
+        "persone",
+        "personex",
         "prodotto",
-        "ruolo"
+        "ruolo",
+        "securemail",
+        "webmailsmtp"
     ]
 }

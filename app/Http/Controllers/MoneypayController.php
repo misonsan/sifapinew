@@ -198,5 +198,26 @@ class MoneypayController extends Controller
 
     }
 
+    public function truncate()  {
+
+        $res = [
+            'data' =>[],
+            'number' => 0,
+            'message' => '',
+            'rc' => 'KO'
+                ];
+            try{
+
+                DB::table('Moneypays')->truncate();
+
+                $res['number'] = Moneypay::All()->count();
+                $res['message'] = 'Cancellate tutte le righe dei pagamenti';
+                $res['rc'] = 'OK';
+            } catch (\Exception $e){
+                $res['message'] = $e->getMessage();
+            }
+            return $res;
+
+    }
 
 }

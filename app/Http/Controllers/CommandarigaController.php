@@ -251,7 +251,7 @@ class CommandarigaController extends Controller
             return $res;
 
     }
-   
+
 
     public function getProdottiCucinadaConsegnare($comp,$flagL,$flagC)
 
@@ -311,7 +311,7 @@ class CommandarigaController extends Controller
             return $res;
 
     }
-   
+
 
     public function getProdottiConsegnati($comp,$flagC)
 
@@ -341,7 +341,7 @@ class CommandarigaController extends Controller
             return $res;
 
     }
- 
+
     public function getAllProdotti($comp)
 
     {
@@ -401,6 +401,27 @@ class CommandarigaController extends Controller
 
     }
 
+    public function truncate()  {
+
+        $res = [
+            'data' =>[],
+            'number' => 0,
+            'message' => '',
+            'rc' => 'KO'
+                ];
+            try{
+
+                DB::table('Commandarigas')->truncate();
+
+                $res['number'] = Commandariga::All()->count();
+                $res['message'] = 'Cancellate tutte le righe delle Commande';
+                $res['rc'] = 'OK';
+            } catch (\Exception $e){
+                $res['message'] = $e->getMessage();
+            }
+            return $res;
+
+    }
 
 
 }

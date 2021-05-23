@@ -67,7 +67,7 @@ class PersonaController extends Controller
         try {
             $User = new Persona();
             $success = true;
-            $postData = $request->except('id','_method', 'd_Titolo', 'd_Stato_Persona', 'd_ruolo', 'd_ruolo_day', 'UserLevelName');
+            $postData = $request->except('_method', 'd_Titolo', 'd_Stato_Persona', 'd_ruolo', 'd_ruolo_day', 'UserLevelName');
             // $postData['password'] =  Hash::make($postData['password'] ?? 'password');     // nel caso ci siano campi da cripare
             $User->fill($postData);
             $success = $User->save();
@@ -181,7 +181,7 @@ class PersonaController extends Controller
             $res = [
                 'data' =>[],
                 'number' => 0,
-                'message' => 'Devo effettuare la ricerca delle persone'
+                'message' => 'Devo effettuare la ricerca delle persone per Ruolo'
                     ];
                 try{
                 $res['data'] =  Persona::select('Personas.*', 'T_titolos.d_Titolo', 'T_Stato_Personas.d_Stato_Persona', 'T_Ruolos.d_ruolo', 'T_Ruolo_days.d_ruolo_day', 'userLevels.UserLevelName')
@@ -219,16 +219,16 @@ class PersonaController extends Controller
                                             ->join('T_Ruolo_days', 'Personas.idRuolo_Day', '=', 'T_Ruolo_days.id')
                                             ->join('userLevels', 'Personas.UserLevel', '=', 'userLevels.id')
                                             ->where('idRuolo_Day', '>', 0)->where('idRuolo_Day', '<', $val2)
-                                            
+
                                           /*  ->where([
                                                 ['idRuolo_Day', '>', 0],
                                                 ['idRuolo_Day', '<', $val1],
                                             ])  */
-                                      
-                                       ->orderby('d_ruolo_day','asc') 
+
+                                       ->orderby('d_ruolo_day','asc')
                                         ->orderby('cognome','asc')
-                                        ->orderby('nome', 'asc')  
-                                        ->get();   
+                                        ->orderby('nome', 'asc')
+                                        ->get();
                     $res['number'] = Persona::where('idRuolo_Day', '>', $val1)->where('idRuolo_Day', '<', $val2)->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
                     $res['message'] = 'trovato Persone per Ruolo filtrato';
                 } catch (\Exception $e){
@@ -287,11 +287,148 @@ class PersonaController extends Controller
                                                 ->orderby('nome', 'asc')
                                                 ->get();   // $res['data'] = Fedele::where('idmessa',$idmessa->input('idmessa'))->get();
                             $res['number'] = Persona::where('inServizio', '=', $inServizio)->where('utilizzatoCommanda', '=', $utilCommanda)->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
-                            $res['message'] = 'trovato Persone attive';
+                            if($res['number'] > 0) {
+                                $res['message'] = 'trovato  Persone attive ';
+                            } else {
+                                $res['message'] = 'non ho trovato Persone attive';
+                            }
+
                         } catch (\Exception $e){
                             $res['message'] = $e->getMessage();
                         }
                         return $res;
+                    }
+
+                    public function getpersoneforTitolo($id)
+                    {
+
+                        $res = [
+                            'data' =>[],
+                            'number' => 0,
+                            'message' => 'Devo effettuare la ricerca delle persone per Titolo'
+                                ];
+                            try{
+                            $res['data'] =  Persona::select('Personas.*', 'T_titolos.d_Titolo', 'T_Stato_Personas.d_Stato_Persona', 'T_Ruolos.d_ruolo', 'T_Ruolo_days.d_ruolo_day', 'userLevels.UserLevelName')
+                                                        ->join('T_titolos', 'Personas.titolo', '=', 'T_Titolos.id')
+                                                        ->join('T_Stato_Personas', 'Personas.idstato', '=', 'T_Stato_Personas.id')
+                                                        ->join('T_Ruolos', 'Personas.idRuolo', '=', 'T_Ruolos.id')
+                                                        ->join('T_Ruolo_days', 'Personas.idRuolo_Day', '=', 'T_Ruolo_days.id')
+                                                        ->join('userLevels', 'Personas.UserLevel', '=', 'userLevels.id')
+                                                        ->where('titolo',$id)
+                                                        ->orderby('d_titolo','asc')
+                                                        ->orderby('cognome','asc')
+                                                        ->orderby('nome', 'asc')
+                                                        ->get();   // $res['data'] = Fedele::where('idmessa',$idmessa->input('idmessa'))->get();
+                                $res['number'] = Persona::where('titolo',$id)->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
+                                $res['message'] = 'trovato Persone per Titolo';
+                            } catch (\Exception $e){
+                                $res['message'] = $e->getMessage();
+                            }
+                            return $res;
+
+                    }
+
+                    public function getpersoneforStato($id)
+                    {
+
+                        $res = [
+                            'data' =>[],
+                            'number' => 0,
+                            'message' => 'Devo effettuare la ricerca delle persone per Stato'
+                                ];
+                            try{
+                            $res['data'] =  Persona::select('Personas.*', 'T_titolos.d_Titolo', 'T_Stato_Personas.d_Stato_Persona', 'T_Ruolos.d_ruolo', 'T_Ruolo_days.d_ruolo_day', 'userLevels.UserLevelName')
+                                                        ->join('T_titolos', 'Personas.titolo', '=', 'T_Titolos.id')
+                                                        ->join('T_Stato_Personas', 'Personas.idstato', '=', 'T_Stato_Personas.id')
+                                                        ->join('T_Ruolos', 'Personas.idRuolo', '=', 'T_Ruolos.id')
+                                                        ->join('T_Ruolo_days', 'Personas.idRuolo_Day', '=', 'T_Ruolo_days.id')
+                                                        ->join('userLevels', 'Personas.UserLevel', '=', 'userLevels.id')
+                                                        ->where('idstato',$id)
+                                                        ->orderby('d_Stato_Persona','asc')
+                                                        ->orderby('cognome','asc')
+                                                        ->orderby('nome', 'asc')
+                                                        ->get();   // $res['data'] = Fedele::where('idmessa',$idmessa->input('idmessa'))->get();
+                                $res['number'] = Persona::where('idstato',$id)->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
+                                $res['message'] = 'trovato Persone per Stato';
+                            } catch (\Exception $e){
+                                $res['message'] = $e->getMessage();
+                            }
+                            return $res;
+
+                    }
+
+
+                    public function getpersoneforLivello($id)
+                    {
+
+                        $res = [
+                            'data' =>[],
+                            'number' => 0,
+                            'message' => 'Devo effettuare la ricerca delle persone per Livello'
+                                ];
+                            try{
+                            $res['data'] =  Persona::select('Personas.*', 'T_titolos.d_Titolo', 'T_Stato_Personas.d_Stato_Persona', 'T_Ruolos.d_ruolo', 'T_Ruolo_days.d_ruolo_day', 'userLevels.UserLevelName')
+                                                        ->join('T_titolos', 'Personas.titolo', '=', 'T_Titolos.id')
+                                                        ->join('T_Stato_Personas', 'Personas.idstato', '=', 'T_Stato_Personas.id')
+                                                        ->join('T_Ruolos', 'Personas.idRuolo', '=', 'T_Ruolos.id')
+                                                        ->join('T_Ruolo_days', 'Personas.idRuolo_Day', '=', 'T_Ruolo_days.id')
+                                                        ->join('userLevels', 'Personas.UserLevel', '=', 'userLevels.id')
+                                                        ->where('userLevel',$id)
+                                                        ->orderby('UserLevelName','asc')
+                                                        ->orderby('cognome','asc')
+                                                        ->orderby('nome', 'asc')
+                                                        ->get();   // $res['data'] = Fedele::where('idmessa',$idmessa->input('idmessa'))->get();
+                                $res['number'] = Persona::where('userLevel',$id)->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
+                                $res['message'] = 'trovato Persone per Livello';
+                            } catch (\Exception $e){
+                                $res['message'] = $e->getMessage();
+                            }
+                            return $res;
+
+                    }
+
+                    public function getPersonaLastId(Request $request)
+
+                    {
+
+                       $last = 9999;
+                       $res = [
+                            'data' =>[],
+                            'message' => 'Non effettuate rgolare lettura last id',
+                            'Rc' => 'ko'
+                                ];
+                            try{
+                               // $res['data'] = DB::table('Commandas')->orderBy('id', 'DESC')->where('id', '<', $last)->get();
+                                $res['data'] = DB::table('Personas')->where('id', '<', $last)->orderBy('id','desc')->first();
+                                $res['message'] = 'trovato  id dell Ultima persona';
+                                $res['Rc'] = 'Ok';
+                            } catch (\Exception $e){
+                                $res['message'] = $e->getMessage();
+                            }
+                            return $res;
+                    }
+
+                    public function azzeraRuoloPersona()
+
+                    {
+
+                       $ruolo = 0;
+                       $resetfield = 'N';
+                       $res = [
+                            'data' =>[],
+                            'message' => 'Non effettuata regolare update su campo ruolo e inServizio',
+                            'Rc' => 'ko'
+                                ];
+                            try{
+                               // $res['data'] = DB::table('Commandas')->orderBy('id', 'DESC')->where('id', '<', $last)->get();
+                                DB::table('Personas')->update(['idRuolo_Day' => $ruolo, 'inServizio' => $resetfield, 'utilizzatoCommanda' => $resetfield]);
+                                $res['data'] = DB::table('Personas')->orderBy('id','desc')->first();
+                                $res['message'] = 'aggiornato campo ruolo e inServizio per tutte le persone';
+                                $res['Rc'] = 'OK';
+                            } catch (\Exception $e){
+                                $res['message'] = $e->getMessage();
+                            }
+                            return $res;
                     }
 
 

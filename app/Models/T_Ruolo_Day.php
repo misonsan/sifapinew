@@ -9,7 +9,7 @@ class T_Ruolo_Day extends Model
 {
         //  use HasFactory;
 
-        protected $fillable = ['id', 'd_ruolo_day', 'key_utenti_operation' ];
+        protected $fillable = ['id', 'd_ruolo_day', 'tappo', 'key_utenti_operation' ];
 
         /**
        * The attributes that should be hidden for arrays.

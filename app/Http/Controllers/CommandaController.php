@@ -342,7 +342,7 @@ class CommandaController extends Controller
                     // DB::table('Commandas')truncate()
                     Commanda::truncate();
               //      Commanda::All()->delete();
-    
+
                     $res['number'] = Commanda::All()->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
                     $res['message'] = 'Cancellate tutte le Commande';
                     $res['rc'] = 'OK';
@@ -351,6 +351,93 @@ class CommandaController extends Controller
                 }
                 return $res;
         }
- 
+
+
+        public function truncate()  {
+
+            // disattivo temporaneamente le foreign key per effettuare il truncate della tabella
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+            $res = [
+                'data' =>[],
+                'number' => 0,
+                'message' => '',
+                'rc' => 'KO'
+                    ];
+                try{
+
+                    DB::table('Commandas')->truncate();
+                    // riattivo le foreign key dopo aver ricreato la tabella
+                    DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+                    $res['number'] = Commanda::All()->count();
+                    $res['message'] = 'Cancellate tutte le Commande';
+                    $res['rc'] = 'OK';
+
+                } catch (\Exception $e){
+                    $res['message'] = $e->getMessage();
+                }
+
+                return $res;
+
+        }
+
+
+        // verifico le commande con stato > 0 and < 4 per competenza e stato righe da evadere (0)
+        public function getCommandeByGiornataeCompetenzaerigacomma($id, $competenza)
+
+        {
+            $statostart = 0;
+            $statoend = 4;
+            $statoriga = 0;
+            $res = [
+                'data' =>[],
+                'number' => 0,
+                'message' => ''
+                    ];
+                try{
+                    $res['data'] = Commanda::select('Commandas.*', 'T_Stato_Bevandes.d_stato_bevande', 'T_Stato_Commandas.d_stato_commanda', 'T_Stato_Contabiles.d_stato_Contabile', 'T_Stato_Cucinas.d_stato_Cucina')
+                                            ->join('T_Stato_Bevandes', 'Commandas.statoBevande', '=', 'T_Stato_Bevandes.id')
+                                            ->join('T_Stato_Commandas', 'Commandas.stato', '=', 'T_Stato_Commandas.id')
+                                            ->join('T_Stato_Contabiles', 'Commandas.statoContabile', '=', 'T_Stato_Contabiles.id')
+                                            ->join('T_Stato_Cucinas', 'Commandas.statoCucina', '=', 'T_Stato_Cucinas.id')
+                                            ->join('commandarigas', 'Commandas.id', '=', 'commandarigas.idCommanda')
+                                            ->where('idGiornata',$id)
+                                            ->where('competenza', '=', $competenza)
+                                            ->where([
+                                                ['commandas.stato', '>', $statostart],
+                                                ['commandas.stato', '<', $statoend],
+                                                ])
+                                            ->where('commandarigas.stato', '=', $statoriga)
+                                            ->distinct()->get(['competenza']);
+
+                 //   $res['number'] = Commanda::where('idGiornata',$id)->where('competenza', '=', $competenza)->distinct()->get(['competenza'])->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
+
+                    $res['number'] = Commanda::select('Commandas.*', 'T_Stato_Bevandes.d_stato_bevande', 'T_Stato_Commandas.d_stato_commanda', 'T_Stato_Contabiles.d_stato_Contabile', 'T_Stato_Cucinas.d_stato_Cucina')
+                                            ->join('T_Stato_Bevandes', 'Commandas.statoBevande', '=', 'T_Stato_Bevandes.id')
+                                            ->join('T_Stato_Commandas', 'Commandas.stato', '=', 'T_Stato_Commandas.id')
+                                            ->join('T_Stato_Contabiles', 'Commandas.statoContabile', '=', 'T_Stato_Contabiles.id')
+                                            ->join('T_Stato_Cucinas', 'Commandas.statoCucina', '=', 'T_Stato_Cucinas.id')
+                                            ->join('commandarigas', 'Commandas.id', '=', 'commandarigas.idCommanda')
+                                            ->where('idGiornata',$id)
+                                            ->where('competenza', '=', $competenza)
+                                            ->where([
+                                                ['commandas.stato', '>', $statostart],
+                                                ['commandas.stato', '<', $statoend],
+                                                ])
+                                                ->where('commandarigas.stato', '=', $statoriga)
+                                                ->distinct()->get(['competenza'])->count();
+
+
+
+
+                    $res['message'] = 'trovato Commande per Giornata filtrata su competenza e stato';
+                } catch (\Exception $e){
+                    $res['message'] = $e->getMessage();
+                }
+                return $res;
+
+        }
+
+
 
 }

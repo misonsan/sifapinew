@@ -70,7 +70,7 @@ class ProdottoController extends Controller
         try {
             $User = new Prodotto();
             $success = true;
-            $postData = $request->except('id','_method', 'd_stato_prodotto', 'd_competenza', 'd_categoria', 'd_tipologia');
+            $postData = $request->except('_method', 'd_stato_prodotto', 'd_competenza', 'd_categoria', 'd_tipologia');  // id lo creo io e quindo non posso filtrarlo
             // $postData['password'] =  Hash::make($postData['password'] ?? 'password');     // nel caso ci siano campi da cripare
             $User->fill($postData);
             $success = $User->save();
@@ -327,6 +327,51 @@ class ProdottoController extends Controller
                 }
                 return $res;
         }
-     
+
+        public function getProdottoLastId(Request $request)
+
+        {
+
+           $last = 9999;
+           $res = [
+                'data' =>[],
+                'message' => 'Non effettuate rgolare lettura last id',
+                'Rc' => 'ko'
+                    ];
+                try{
+                   // $res['data'] = DB::table('Commandas')->orderBy('id', 'DESC')->where('id', '<', $last)->get();
+                    $res['data'] = DB::table('Prodottos')->orderBy('id','desc')->first();
+                    $res['message'] = 'trovato  id dell Ultimo prodotto';
+                    $res['Rc'] = 'Ok';
+                } catch (\Exception $e){
+                    $res['message'] = $e->getMessage();
+                }
+                return $res;
+        }
+
+
+        public function updateamenuProdotto()
+
+        {
+
+           $amenu = '*';
+           $res = [
+                'data' =>[],
+                'message' => 'Non effettuata rgolare update su campo amenu',
+                'Rc' => 'ko'
+                    ];
+                try{
+                   // $res['data'] = DB::table('Commandas')->orderBy('id', 'DESC')->where('id', '<', $last)->get();
+                    DB::table('Prodottos')->update(['amenu' => $amenu]);
+                    $res['data'] = DB::table('Prodottos')->orderBy('id','desc')->first();
+                    $res['message'] = 'aggiornato campo amenu per tutti i prodotti';
+                    $res['Rc'] = 'OK';
+                } catch (\Exception $e){
+                    $res['message'] = $e->getMessage();
+                }
+                return $res;
+        }
+
+
 }
 

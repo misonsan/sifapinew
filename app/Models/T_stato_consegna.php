@@ -9,7 +9,7 @@ class T_stato_consegna extends Model
 {
             //  use HasFactory;
 
-   protected $fillable = ['id', 'd_stato_consegna', 'key_utenti_operation' ];
+   protected $fillable = ['id', 'd_stato_consegna', 'tappo', 'key_utenti_operation' ];
 
    /**
   * The attributes that should be hidden for arrays.

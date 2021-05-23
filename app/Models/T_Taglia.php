@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class T_Taglia extends Model
 {
    // use HasFactory;
-   protected $fillable = ['id', 'd_taglia', 'valore_taglia', 'key_utenti_operation'];
+   protected $fillable = ['id', 'd_taglia', 'valore_taglia', 'tappo', 'key_utenti_operation'];
 
   /**
 * The attributes that should be hidden for arrays.

@@ -241,4 +241,40 @@ class CommandawrigaController extends Controller
         return $res;
    }
 
+
+   public function getProdottibyTipologiacomma($tipo, $id) {
+
+      //
+      $qta = 0;
+      $res = [
+      'data' =>[],
+      'number' => 0,
+      'message' => ''
+          ];
+      try{
+      // $res['data'] = Manifestazione::all();   // $res['data'] = Fedele::where('idmessa',$idmessa->input('idmessa'))->get();
+      // lettura con join a tabelle correlate
+          $res['data'] = DB::table('Commandawrigas')
+                           ->join('T_Categoria_Prodottos', 'Commandawrigas.categoria', '=', 'T_Categoria_Prodottos.id')
+                           ->select('Commandawrigas.*', 'T_Categoria_Prodottos.d_Categoria')
+                           ->where('tipologia',$tipo)->where('disponibile_Day', '>', $qta)->where('idCommanda',$id)
+                           ->orderby('d_Categoria','asc')
+                           ->orderby('descrizione_prodotto', 'asc')
+                           ->get();
+          $res['number'] = Commandawriga::where('tipologia',$tipo)->where('disponibile_Day', '>', $qta)->where('idCommanda',$id)->count();  // Fedele::where('idmessa',$idmessa->input('idmessa'))->count();
+          $res['message'] = 'trovato Prodotti per la categoria Selezionata e fattura';
+      } catch (\Exception $e){
+          $res['message'] = $e->getMessage();
+      }
+      return $res;
+
+
+
+
+   }
+
+
+
+
+
 }
